@@ -1,0 +1,140 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Painel · Olinda Imports</title>
+<style>
+*{box-sizing:border-box;margin:0}body{font:14px system-ui,sans-serif;height:100vh;display:flex;flex-direction:column;background:#eef3f2;color:#0b2b28}
+#top{display:flex;gap:8px;align-items:center;padding:8px 14px;background:#0b2b28;color:#fff;flex-wrap:wrap}.sp{flex:1}
+.st{font-size:12px;opacity:.8}.st.dr{color:#fbbf24;opacity:1}.st.ok{color:#6ee7b7;opacity:1}
+.b{border:1px solid #cfe0dd;background:#fff;color:#0b2b28;border-radius:8px;padding:7px 12px;font:600 13px system-ui;cursor:pointer}.b.p{background:#129383;color:#fff;border-color:#129383}.b.r{color:#c0392b}
+#app{flex:1;display:flex;min-height:0}aside{width:390px;background:#fff;display:flex;flex-direction:column;border-right:1px solid #d5e6e3}
+nav{display:flex;border-bottom:1px solid #d5e6e3}.tb{flex:1;border:0;background:none;padding:11px 2px;font:600 12px system-ui;cursor:pointer;color:#5b7370}.tb.on{color:#129383;box-shadow:inset 0 -3px #129383}
+#pn{padding:14px;overflow:auto;flex:1;display:grid;gap:10px;align-content:start}
+label{display:grid;gap:4px;font-size:12px;font-weight:600;color:#5b7370}input,select,textarea{border:1px solid #d5e6e3;border-radius:8px;padding:8px 10px;font:14px system-ui;width:100%;color:#0b2b28}
+main{flex:1;display:flex;justify-content:center;background:#dfe9e7;overflow:auto}iframe{border:0;background:#fff;width:100%;height:100%}
+.pv{max-width:100%;max-height:200px;object-fit:contain;background:repeating-conic-gradient(#eee 0 25%,#fff 0 50%) 0 0/16px 16px;border-radius:8px;border:1px solid #d5e6e3}
+.rw{display:flex;gap:6px;align-items:center}.rw input[type=color]{width:42px;height:36px;padding:2px;flex:none}
+.th{width:38px;height:38px;flex:none;object-fit:cover;border-radius:8px;border:1px dashed #129383;display:grid;place-items:center;font-size:9px;color:#129383;cursor:pointer}
+.g{display:grid;gap:8px}.it{display:flex;gap:10px;align-items:center;padding:8px;border:1px solid #d5e6e3;border-radius:10px;cursor:pointer}.it:hover{border-color:#129383;background:#e6f4f2}.it img{width:38px;height:38px;object-fit:contain}.it small{color:#5b7370;display:block}
+.h{color:#5b7370;line-height:1.5}h3{font-size:15px}h4{font-size:13px;margin-top:6px}
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(78px,1fr));gap:8px}.cg label{text-align:center;font-size:10px}.cg input{height:42px;padding:2px}
+#ld{position:fixed;inset:0;background:#0b2b28ee;display:grid;place-items:center;z-index:9;color:#fff;text-align:center}#ld>div{display:grid;gap:12px;max-width:430px;padding:20px}
+#toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:#0b2b28;color:#fff;padding:10px 18px;border-radius:10px;z-index:99;display:none}
+dialog{border:0;border-radius:16px;padding:20px}
+@media(max-width:800px){#app{flex-direction:column-reverse}aside{width:100%;height:48%}}
+</style></head><body>
+<div id="top"><b>Painel · Olinda Imports</b><span id="st" class="st">Nenhum site aberto</span><span class="sp"></span><button class="b" id="dv">📱 / 🖥</button><button class="b" id="gb">GitHub</button><button class="b" id="dl">⬇ Baixar site</button><button class="b p" id="pb">Publicar</button></div>
+<div id="app"><aside><nav><button class="tb on" data-tab="site">🖱 Site</button><button class="tb" data-tab="prod">📱 Aparelhos</button><button class="tb" data-tab="loja">🏬 Loja</button><button class="tb" data-tab="cor">🎨 Cores</button><button class="tb" data-tab="all">☰ Tudo</button></nav><div id="pn"></div></aside><main><iframe id="fr"></iframe></main></div>
+<div id="ld"><div><h2>Painel do site Olinda Imports</h2><p>Abra o <b>index.html</b> do site para começar a editar.</p><label class="b p" style="display:block">Abrir index.html<input id="fi" type="file" accept=".html" hidden></label><button class="b" id="rd" style="display:none">Continuar rascunho salvo</button><button class="b" id="gh0">Carregar do GitHub</button></div></div>
+<dialog id="gm"><form method="dialog" class="g" style="min-width:min(420px,86vw)"><h3>Publicação automática (GitHub)</h3><p class="h">Coloque o site num repositório do GitHub ligado à hospedagem (Netlify, Vercel, Cloudflare Pages ou GitHub Pages). O painel envia o arquivo e a hospedagem atualiza o site oficial sozinha. Crie um token com permissão <b>Contents: Read and write</b> nesse repositório.</p><label>Repositório<input id="g1" placeholder="usuario/nome-do-repo"></label><label>Branch<input id="g2" value="main"></label><label>Arquivo<input id="g3" value="index.html"></label><label>Token<input id="g4" type="password"></label><label class="rw" style="display:flex"><input id="g5" type="checkbox" style="width:auto"> Publicar sozinho a cada alteração</label><div class="rw"><button class="b p" value="ok">Salvar</button><button class="b" type="button" id="gl">Carregar site do GitHub</button><button class="b" value="c">Fechar</button></div></form></dialog>
+<div id="toast"></div>
+<script>
+const $=s=>document.querySelector(s),$$=s=>[...document.querySelectorAll(s)],esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let M,D,W,d,SAL=[],hadP=false,pdirty=false,tab='site',cur=null,selId=null,NX=0,tm={},C=JSON.parse(localStorage.getItem('olinda-gh')||'{}');const fr=$('#fr'),SALRE=/const SALES=\[[^\]]*\]/;
+const toast=t=>{const e=$('#toast');e.textContent=t;e.style.display='block';clearTimeout(tm.t);tm.t=setTimeout(()=>e.style.display='none',3200)};
+const setSt=(t,k)=>{const e=$('#st');e.textContent=t;e.className='st '+(k===1?'ok':k===2?'dr':'')};
+const gm=id=>M.querySelector(`[data-eid="${id}"]`),gl=id=>d?[...d.querySelectorAll(`[data-eid="${id}"]`)]:[],gp=()=>D&&D.products&&D.products.find(x=>x.id===cur);
+const idb=(m,v)=>new Promise((ok,no)=>{const r=indexedDB.open('olinda-admin',1);r.onupgradeneeded=()=>r.result.createObjectStore('k');r.onsuccess=()=>{const s=r.result.transaction('k',m==='get'?'readonly':'readwrite').objectStore('k'),q=m==='get'?s.get('draft'):s.put(v,'draft');q.onsuccess=()=>ok(q.result);q.onerror=no};r.onerror=no});
+/* ---------- carregar ---------- */
+function load(t){M=new DOMParser().parseFromString(t,'text/html');NX=0;M.querySelectorAll('*').forEach(e=>e.setAttribute('data-eid',NX++));
+ try{hadP=!!JSON.parse(M.getElementById('data').textContent).products}catch(e){}
+ let m;for(const s of M.scripts){m=s.textContent.match(/const SALES=\[([^\]]*)\]/);if(m)break}SAL=m?m[1].split(',').map(x=>x.replace(/["'\s]/g,'')).filter(Boolean):[];
+ D=null;pdirty=false;cur=null;selId=null;$('#ld').style.display='none';setSt('Carregando site…');fr.srcdoc='<!DOCTYPE html>'+M.documentElement.outerHTML}
+fr.onload=()=>{W=fr.contentWindow;d=fr.contentDocument;if(!M)return;
+ if(!D){try{D=JSON.parse(JSON.stringify(W.eval('D')))}catch(e){D=JSON.parse(M.getElementById('data').textContent)}D.cfg=D.cfg||{}}
+ const s=d.createElement('style');s.textContent='.hv{outline:2px dashed #f59e0b!important;outline-offset:-2px;cursor:pointer!important}.sl{outline:3px solid #ef4444!important;outline-offset:-3px}';d.head.appendChild(s);
+ d.addEventListener('mouseover',e=>{d.querySelectorAll('.hv').forEach(x=>x.classList.remove('hv'));e.target.classList&&e.target.classList.add('hv')});
+ d.addEventListener('click',onClick,true);setSt('Site aberto · clique para editar');go('site')};
+function onClick(e){e.preventDefault();e.stopPropagation();let t=e.target;const c=t.closest('.card[data-id]');
+ if(c){cur=c.dataset.id;go('prod');return}
+ if(t.closest('svg'))t=t.closest('svg');else if(t.tagName!=='IMG'){const im=[...t.children].find(x=>x.tagName==='IMG');if(im&&![...t.childNodes].some(n=>n.nodeType==3&&n.nodeValue.trim()))t=im}
+ const id=t.getAttribute('data-eid');if(id==null){if(t.closest('#ft'))go('loja');else toast('Item gerado automaticamente: veja as abas Aparelhos e Loja.');return}choose(id)}
+function choose(id,sc){selId=id;d.querySelectorAll('.sl').forEach(x=>x.classList.remove('sl'));const l=gl(id)[0];if(l){l.classList.add('sl');sc&&l.scrollIntoView({block:'center'})}go('site')}
+/* ---------- edições no site ---------- */
+function setText(id,i,v){gm(id).childNodes[i].nodeValue=v;gl(id).forEach(e=>{const n=e.childNodes[i];n&&n.nodeType==3&&(n.nodeValue=v)});dirty()}
+function setAttr(id,k,v){gm(id).setAttribute(k,v);gl(id).forEach(e=>e.setAttribute(k,v));dirty()}
+function setImg(id,u){[gm(id),...gl(id)].forEach(e=>{e.setAttribute('src',u);e.hasAttribute('data-full')&&e.setAttribute('data-full',u)});dirty()}
+function swapImg(id,u){const f=(o,doc)=>{const i=doc.createElement('img');i.className=o.getAttribute('class')||'';i.setAttribute('data-eid',id);i.src=u;i.alt='';i.style.cssText='stroke:none;fill:none;object-fit:contain;padding:0';o.replaceWith(i)};f(gm(id),M);gl(id).forEach(o=>f(o,d));dirty()}
+function rep(o,n){const r=new RegExp(o,'gi');[...M.querySelectorAll('style'),...(d?d.querySelectorAll('style'):[])].forEach(s=>s.textContent=s.textContent.replace(r,n));dirty()}
+function pickFile(cb,max){const i=document.createElement('input');i.type='file';i.accept='image/*';i.onchange=async()=>{const f=i.files[0];if(f)cb(await prep(f,max||1600))};i.click()}
+async function prep(f,max){if(/svg|gif/.test(f.type))return new Promise(r=>{const a=new FileReader;a.onload=()=>r(a.result);a.readAsDataURL(f)});
+ const b=await createImageBitmap(f),k=Math.min(1,max/Math.max(b.width,b.height)),c=document.createElement('canvas');c.width=Math.round(b.width*k);c.height=Math.round(b.height*k);c.getContext('2d').drawImage(b,0,0,c.width,c.height);return c.toDataURL('image/webp',.92)}
+function applySales(){try{W.eval('SALES.splice(0,SALES.length,'+SAL.filter(Boolean).map(x=>'"'+x+'"')+')')}catch(e){}dirty()}
+function pl(){clearTimeout(tm.l);tm.l=setTimeout(()=>{try{W.__D=D;W.eval('D=__D;draw();drawFt();setWa()')}catch(e){}},300);dirty()}
+const pd=()=>{pdirty=true;pl()};
+/* ---------- painéis ---------- */
+const CF=[['store','Nome da loja'],['whatsapp','WhatsApp principal (DDI+DDD)'],['instagram','Instagram'],['phone','Telefone'],['email','E-mail'],['address','Endereço'],['city','Cidade / UF / CEP'],['mapq','Endereço para o mapa'],['hours','Horário de atendimento'],['cnpj','CNPJ'],['payments','Formas de pagamento (separe por vírgula)']];
+function go(t){tab=t||tab;$$('.tb').forEach(b=>b.classList.toggle('on',b.dataset.tab===tab));if(!M||!D){$('#pn').innerHTML='<p class="h">Abra o site para começar.</p>';return}$('#pn').innerHTML=({site:pSite,prod:pProd,loja:pLoja,cor:pCor,all:pAll}[tab])();if(tab==='prod'&&!gp()&&D.products)fillList();if(tab==='all')fillAll()}
+function pSite(){if(selId==null)return'<p class="h">Clique em qualquer <b>texto, imagem, ícone ou logo</b> no site ao lado. Para aparelhos, clique no card. Itens escondidos ficam na aba <b>Tudo</b>.</p>';
+ const m=gm(selId);if(!m)return'<p class="h">Item não encontrado.</p>';const tn=[...m.childNodes].map((n,i)=>[n,i]).filter(([n])=>n.nodeType==3&&n.nodeValue.trim());let h=`<h3>Editando &lt;${m.tagName.toLowerCase()}&gt;</h3>`;
+ tn.forEach(([n,i])=>h+=`<label>Texto<textarea data-t="${i}" rows="${Math.min(7,Math.ceil(n.nodeValue.length/36)+1)}">${esc(n.nodeValue)}</textarea></label>`);
+ if(m.tagName==='IMG')h+=`<img class="pv" src="${m.getAttribute('src')}"><button class="b p" data-up="img">Trocar imagem / logo</button><label>Texto alternativo<input data-a="alt" data-e="${selId}" value="${esc(m.getAttribute('alt')||'')}"></label>`;
+ if(m.tagName.toLowerCase()==='svg'){const u=m.querySelector('use'),sid=u?(u.getAttribute('href')||'').slice(1):'',sy=sid&&M.getElementById(sid);
+  h+=(u?`<label>Ícone<select data-ic>${[...M.querySelectorAll('symbol')].map(s=>`<option ${s.id==sid?'selected':''}>${s.id}</option>`).join('')}</select></label>`:'')+(sy?`<label>Código SVG (vale para todos que usam este ícone)<textarea data-sym="${sid}" rows="5">${esc(sy.innerHTML)}</textarea></label>`:'')+'<button class="b p" data-up="svg">Trocar por imagem / logo</button>'}
+ const L=m.closest('a[href],[data-href]');if(L){const k=L.hasAttribute('href')?'href':'data-href';h+=`<label>Link (${k})<input data-a="${k}" data-e="${L.getAttribute('data-eid')}" value="${esc(L.getAttribute(k))}" placeholder="https://..."></label>`}
+ return h+'<div class="rw"><button class="b" data-dp="1">Duplicar elemento</button><button class="b r" data-rm="1">Excluir elemento</button></div>'}
+function pProd(){if(!D.products)return'<p class="h">Nenhum aparelho encontrado.</p>';const P=gp();if(!P)return'<input id="pq" placeholder="Buscar aparelho"><button class="b p" data-new="1">+ Novo aparelho</button><div id="pl" class="g"></div>';
+ const br=[...new Set(D.products.map(p=>p.brand))];
+ return`<button class="b" data-back="1">← Voltar à lista</button><h3>${esc(P.name||'Novo aparelho')}</h3>${P.img?`<img class="pv" src="${P.img}">`:''}<button class="b p" data-pi="1">Trocar foto principal</button>
+<label>Marca<input list="bl" data-p="brand" value="${esc(P.brand)}"></label><datalist id="bl">${br.map(b=>`<option>${esc(b)}`).join('')}</datalist>
+<label>Linha / série<input data-p="series" value="${esc(P.series)}"></label><label>Nome<input data-p="name" value="${esc(P.name)}"></label>
+<label>Preço em R$ (vazio = "Consulte o valor")<input type="number" step="0.01" data-p="price" value="${esc(P.price)}"></label>
+<label>Condição<select data-p="cond"><option value="">Lacrado</option><option value="seminovo" ${P.cond==='seminovo'?'selected':''}>Seminovo</option></select></label>
+<label>Especificações (uma por linha)<textarea data-p="specs" rows="8">${esc(P.specs)}</textarea></label><h4>Cores e fotos</h4>
+${(P.colors||[]).map((c,i)=>`<div class="rw"><input type="color" data-c="${i}.hex" value="${c.hex||'#cccccc'}"><input data-c="${i}.name" value="${esc(c.name)}">${c.img?`<img class="th" src="${c.img}" data-ci="${i}">`:`<span class="th" data-ci="${i}">+foto</span>`}<button class="b r" data-cd="${i}">✕</button></div>`).join('')}
+<button class="b" data-ca="1">+ Adicionar cor</button><div class="rw"><button class="b" data-dup="1">Duplicar</button><button class="b r" data-del="1">Excluir</button></div>`}
+function fillList(){const q=($('#pq').value||'').toLowerCase();$('#pl').innerHTML=D.products.filter(p=>(p.brand+' '+p.name).toLowerCase().includes(q)).map(p=>`<div class="it" data-pr="${p.id}">${p.img?`<img loading="lazy" src="${p.img}">`:''}<div><b>${esc(p.name)}</b><small>${esc(p.brand)}${p.cond?' · seminovo':''} · ${p.price?'R$ '+esc(p.price):'consulte'}</small></div></div>`).join('')}
+function pLoja(){const c=D.cfg;return'<h3>Dados da loja (rodapé, contato, pagamentos)</h3>'+CF.map(([k,l])=>`<label>${l}<input data-f="${k}" value="${esc(c[k])}"></label>`).join('')+'<h3>Canais de venda (um é sorteado a cada clique)</h3>'+[...SAL,''].map((x,i)=>`<label>Canal ${i+1}<input data-s="${i}" value="${esc(x)}" placeholder="5581999999999"></label>`).join('')+`<h3>Google e aba do navegador</h3><label>Título do site<input data-seo="title" value="${esc(M.title)}"></label><label>Descrição<textarea data-seo="desc" rows="3">${esc((M.querySelector('meta[name=description]')||{}).content||'')}</textarea></label><button class="b" data-fav="1">Trocar favicon</button>`}
+function pCor(){const s=new Set;M.querySelectorAll('style').forEach(e=>(e.textContent.match(/#[0-9a-fA-F]{6}\b/g)||[]).forEach(x=>s.add(x.toLowerCase())));return'<h3>Cores do site</h3><p class="h">Trocar uma cor altera todos os lugares onde ela aparece.</p><div class="cg">'+[...s].map(x=>`<label><input type="color" data-col="${x}" value="${x}">${x}</label>`).join('')+'</div>'}
+function pAll(){return'<input id="aq" placeholder="Buscar texto ou imagem"><div id="al" class="g"></div>'}
+function fillAll(){const q=($('#aq').value||'').toLowerCase(),r=[];M.body.querySelectorAll('[data-eid]').forEach(e=>{if(/^(SCRIPT|STYLE)$/i.test(e.tagName))return;const id=e.getAttribute('data-eid');
+ if(e.tagName==='IMG')r.push(['🖼',e.getAttribute('alt')||e.className||'imagem',id,e.src]);else{const t=[...e.childNodes].filter(n=>n.nodeType==3&&n.nodeValue.trim()).map(n=>n.nodeValue.trim()).join(' ');t&&!e.closest('symbol')&&r.push(['T',t,id])}});
+ $('#al').innerHTML=r.filter(x=>x[1].toLowerCase().includes(q)).slice(0,300).map(x=>`<div class="it" data-row="${x[2]}"><b>${x[0]}</b><div>${esc(x[1].slice(0,80))}</div></div>`).join('')}
+/* ---------- eventos do painel ---------- */
+$('#pn').addEventListener('input',e=>{const t=e.target,k=t.dataset,P=gp();
+ if(k.t!=null)setText(selId,+k.t,t.value);else if(k.a)setAttr(k.e,k.a,t.value);
+ else if('ic'in k){gm(selId).querySelector('use').setAttribute('href','#'+t.value);gl(selId).forEach(o=>o.querySelector('use').setAttribute('href','#'+t.value));dirty();go()}
+ else if(k.sym){M.getElementById(k.sym).innerHTML=t.value;const l=d.getElementById(k.sym);l&&(l.innerHTML=t.value);dirty()}
+ else if(k.f){D.cfg[k.f]=k.f==='whatsapp'?t.value.replace(/\D/g,''):t.value;pl()}
+ else if(k.s!=null){SAL[+k.s]=t.value.replace(/\D/g,'');applySales()}
+ else if(k.seo==='title'){M.title=t.value;d.title=t.value;dirty()}
+ else if(k.seo==='desc'){const m=M.querySelector('meta[name=description]');m&&m.setAttribute('content',t.value);dirty()}
+ else if(k.p&&P){if(k.p==='cond')t.value?P.cond=t.value:delete P.cond;else P[k.p]=t.value;pd()}
+ else if(k.c&&P){const[i,f]=k.c.split('.');P.colors[i][f]=t.value;pd()}
+ else if(k.col){rep(k.col,t.value);t.dataset.col=t.value}
+ else if(t.id==='pq')fillList();else if(t.id==='aq')fillAll()});
+$('#pn').addEventListener('click',e=>{const t=e.target.closest('[data-up],[data-pi],[data-back],[data-new],[data-ca],[data-cd],[data-ci],[data-dup],[data-del],[data-pr],[data-row],[data-rm],[data-dp],[data-fav]');if(!t)return;const k=t.dataset,P=gp();
+ if(k.up)pickFile(u=>{k.up==='img'?setImg(selId,u):swapImg(selId,u);go('site')},2400);
+ else if(k.pi)pickFile(u=>{P.img=u;pd();go()},1000);
+ else if(k.back){cur=null;go()}
+ else if(k.new){const p={id:'p'+Date.now(),brand:'',series:'',name:'Novo aparelho',price:'',img:'',colors:[],specs:''};D.products.unshift(p);cur=p.id;pd();go()}
+ else if(k.ca){(P.colors=P.colors||[]).push({name:'Nova cor',hex:'#cccccc',img:''});pd();go()}
+ else if(k.cd){P.colors.splice(+k.cd,1);pd();go()}
+ else if(k.ci)pickFile(u=>{P.colors[+k.ci].img=u;pd();go()},1000);
+ else if(k.dup){const c=JSON.parse(JSON.stringify(P));c.id='p'+Date.now();c.name+=' (cópia)';D.products.splice(D.products.indexOf(P)+1,0,c);cur=c.id;pd();go()}
+ else if(k.del){if(confirm('Excluir este aparelho?')){D.products=D.products.filter(x=>x!==P);cur=null;pd();go()}}
+ else if(k.pr){cur=k.pr;go()}
+ else if(k.row)choose(k.row,1);
+ else if(k.rm){if(confirm('Excluir este elemento do site?')){gm(selId).remove();gl(selId).forEach(x=>x.remove());selId=null;dirty();go()}}
+ else if(k.dp){const m=gm(selId),c=m.cloneNode(true);[c,...c.querySelectorAll('*')].forEach(x=>x.setAttribute('data-eid',NX++));m.after(c);const l=gl(selId)[0];l&&l.after(d.importNode(c,true));dirty();toast('Elemento duplicado.')}
+ else if(k.fav)pickFile(u=>{[M,d].forEach(o=>{const l=o.querySelector('link[rel=icon]');l&&l.setAttribute('href',u)});dirty()},256)});
+$$('.tb').forEach(b=>b.onclick=()=>{if(b.dataset.tab==='prod')cur=null;go(b.dataset.tab)});
+/* ---------- salvar / publicar ---------- */
+function out(){const c=M.cloneNode(true);c.querySelectorAll('[data-eid]').forEach(e=>e.removeAttribute('data-eid'));const x={...D};if(!hadP&&!pdirty)delete x.products;
+ c.getElementById('data').textContent=JSON.stringify(x).replace(/</g,'\\u003c');
+ c.querySelectorAll('script').forEach(s=>{if(SALRE.test(s.textContent))s.textContent=s.textContent.replace(SALRE,()=>'const SALES=['+SAL.filter(Boolean).map(x=>'"'+x+'"').join(',')+']')});return'<!DOCTYPE html>'+c.documentElement.outerHTML}
+function dirty(){setSt('● alterações não publicadas',2);clearTimeout(tm.d);tm.d=setTimeout(()=>idb('set',out()).catch(()=>{}),1500);if(C.auto&&C.tok){clearTimeout(tm.a);tm.a=setTimeout(publish,6000)}}
+const GH=()=>({u:`https://api.github.com/repos/${C.repo}/contents/${C.path||'index.html'}`,H:{Authorization:'Bearer '+C.tok,Accept:'application/vnd.github+json'},br:C.br||'main'});
+async function publish(){if(!M)return;if(!C.repo||!C.tok){$('#gb').click();return toast('Configure o GitHub para publicar.')}
+ setSt('Publicando…',2);try{const g=GH(),r0=await fetch(g.u+'?ref='+g.br,{headers:g.H});let sha;if(r0.ok)sha=(await r0.json()).sha;else if(r0.status!==404)throw Error('GitHub '+r0.status);
+ const by=new TextEncoder().encode(out());let s='';for(let i=0;i<by.length;i+=32768)s+=String.fromCharCode.apply(null,by.subarray(i,i+32768));
+ const r=await fetch(g.u,{method:'PUT',headers:g.H,body:JSON.stringify({message:'Atualização pelo painel',content:btoa(s),sha,branch:g.br})});if(!r.ok)throw Error('GitHub '+r.status);
+ setSt('✔ Publicado às '+new Date().toLocaleTimeString(),1);toast('Publicado! O site oficial atualiza em instantes.')}catch(e){setSt('Erro ao publicar',2);toast('Erro: '+e.message)}}
+async function fromGh(){if(!C.repo||!C.tok)return toast('Informe repositório e token.');try{const g=GH(),r=await fetch(g.u+'?ref='+g.br,{headers:{...g.H,Accept:'application/vnd.github.raw+json'}});if(!r.ok)throw Error('GitHub '+r.status);load(await r.text());$('#gm').close()}catch(e){toast('Erro: '+e.message)}}
+const saveCfg=()=>{C={repo:$('#g1').value.trim(),br:$('#g2').value.trim()||'main',path:$('#g3').value.trim()||'index.html',tok:$('#g4').value.trim(),auto:$('#g5').checked};localStorage.setItem('olinda-gh',JSON.stringify(C))};
+const openGm=()=>{$('#g1').value=C.repo||'';$('#g2').value=C.br||'main';$('#g3').value=C.path||'index.html';$('#g4').value=C.tok||'';$('#g5').checked=!!C.auto;$('#gm').returnValue='';$('#gm').showModal()};
+$('#gb').onclick=openGm;$('#gh0').onclick=openGm;$('#gm').onclose=()=>{if($('#gm').returnValue==='ok'){saveCfg();toast('Configuração salva.')}};
+$('#gl').onclick=()=>{saveCfg();fromGh()};$('#pb').onclick=publish;
+$('#dl').onclick=()=>{if(!M)return;const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([out()],{type:'text/html'}));a.download='index.html';a.click()};
+$('#dv').onclick=()=>{fr.style.width=fr.style.width?'':'390px'};
+$('#fi').onchange=async e=>{const f=e.target.files[0];if(f)load(await f.text())};
+idb('get').then(v=>{if(v){$('#rd').style.display='';$('#rd').onclick=()=>load(v)}}).catch(()=>{});
+addEventListener('beforeunload',e=>{if($('#st').className.includes('dr')){e.preventDefault();e.returnValue=''}});
+</script></body></html>
